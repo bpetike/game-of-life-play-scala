@@ -57,15 +57,17 @@ class PostRepositoryImpl @Inject()()(implicit ec: PostExecutionContext)
   )
 
   override def list()(
-      implicit mc: MarkerContext): Future[Iterable[PostData]] = {
+    implicit mc: MarkerContext
+  ): Future[Iterable[PostData]] = {
     Future {
       logger.trace(s"list: ")
       postList
     }
   }
 
-  override def get(id: PostId)(
-      implicit mc: MarkerContext): Future[Option[PostData]] = {
+  override def get(
+    id: PostId
+  )(implicit mc: MarkerContext): Future[Option[PostData]] = {
     Future {
       logger.trace(s"get: id = $id")
       postList.find(post => post.id == id)

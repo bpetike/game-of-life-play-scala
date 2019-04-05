@@ -15,8 +15,8 @@ case class PostFormInput(title: String, body: String)
   * Takes HTTP requests and produces JSON.
   */
 class PostController @Inject()(cc: PostControllerComponents)(
-    implicit ec: ExecutionContext)
-    extends PostBaseController(cc) {
+  implicit ec: ExecutionContext
+) extends PostBaseController(cc) {
 
   private val logger = Logger(getClass)
 
@@ -24,10 +24,9 @@ class PostController @Inject()(cc: PostControllerComponents)(
     import play.api.data.Forms._
 
     Form(
-      mapping(
-        "title" -> nonEmptyText,
-        "body" -> text
-      )(PostFormInput.apply)(PostFormInput.unapply)
+      mapping("title" -> nonEmptyText, "body" -> text)(PostFormInput.apply)(
+        PostFormInput.unapply
+      )
     )
   }
 
@@ -52,7 +51,8 @@ class PostController @Inject()(cc: PostControllerComponents)(
   }
 
   private def processJsonPost[A]()(
-      implicit request: PostRequest[A]): Future[Result] = {
+    implicit request: PostRequest[A]
+  ): Future[Result] = {
     def failure(badForm: Form[PostFormInput]) = {
       Future.successful(BadRequest(badForm.errorsAsJson))
     }

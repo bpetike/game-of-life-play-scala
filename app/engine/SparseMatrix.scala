@@ -73,7 +73,7 @@ class SparseMatrix(val generation: Int, val data: GenMap[Int, GenSet[Int]])
   def isAlive(loc: Location): Boolean = {
     data.get(loc.x) match {
       case Some(value) => value.contains(loc.y)
-      case None => false
+      case None        => false
     }
   }
 
@@ -90,7 +90,7 @@ class SparseMatrix(val generation: Int, val data: GenMap[Int, GenSet[Int]])
   }
 
   def aliveLocations: Iterable[Location] = {
-    (for ((y, xSet) <- data.seq; x <- xSet) yield Location(x, y)).seq
+    (for ((x, xSet) <- data.seq; y <- xSet) yield Location(x, y)).seq
   }
 
   override def population: Int = data.map(entry => entry._2.size).sum

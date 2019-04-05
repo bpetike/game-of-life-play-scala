@@ -36,10 +36,12 @@ trait RequestMarkerContext {
   }
 
   implicit def requestHeaderToMarkerContext(
-      implicit request: RequestHeader): MarkerContext = {
+    implicit request: RequestHeader
+  ): MarkerContext = {
     MarkerContext {
       marker("id" -> request.id) && marker("host" -> request.host) && marker(
-        "remoteAddress" -> request.remoteAddress)
+        "remoteAddress" -> request.remoteAddress
+      )
     }
   }
 
@@ -52,9 +54,10 @@ trait RequestMarkerContext {
   * the request with contextual data, and manipulate the
   * result.
   */
-class PostActionBuilder @Inject()(messagesApi: MessagesApi,
-                                  playBodyParsers: PlayBodyParsers)(
-    implicit val executionContext: ExecutionContext)
+class PostActionBuilder @Inject()(
+  messagesApi: MessagesApi,
+  playBodyParsers: PlayBodyParsers
+)(implicit val executionContext: ExecutionContext)
     extends ActionBuilder[PostRequest, AnyContent]
     with RequestMarkerContext
     with HttpVerbs {
@@ -69,7 +72,8 @@ class PostActionBuilder @Inject()(messagesApi: MessagesApi,
                               block: PostRequestBlock[A]): Future[Result] = {
     // Convert to marker context and use request in block
     implicit val markerContext: MarkerContext = requestHeaderToMarkerContext(
-      request)
+      request
+    )
     logger.trace(s"invokeBlock: ")
 
     val future = block(new PostRequest(request, messagesApi))
@@ -92,15 +96,15 @@ class PostActionBuilder @Inject()(messagesApi: MessagesApi,
   * controller only has to have one thing injected.
   */
 case class PostControllerComponents @Inject()(
-    postActionBuilder: PostActionBuilder,
-    postResourceHandler: PostResourceHandler,
-    actionBuilder: DefaultActionBuilder,
-    parsers: PlayBodyParsers,
-    messagesApi: MessagesApi,
-    langs: Langs,
-    fileMimeTypes: FileMimeTypes,
-    executionContext: scala.concurrent.ExecutionContext)
-    extends ControllerComponents
+  postActionBuilder: PostActionBuilder,
+  postResourceHandler: PostResourceHandler,
+  actionBuilder: DefaultActionBuilder,
+  parsers: PlayBodyParsers,
+  messagesApi: MessagesApi,
+  langs: Langs,
+  fileMimeTypes: FileMimeTypes,
+  executionContext: scala.concurrent.ExecutionContext
+) extends ControllerComponents
 
 /**
   * Exposes actions and handler to the PostController by wiring the injected state into the base class.

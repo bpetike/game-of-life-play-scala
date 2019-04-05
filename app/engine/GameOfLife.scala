@@ -9,8 +9,10 @@ class GameOfLife(initialWorld: World) {
 
   def step(x: Int) = {
     currentWorld.generateNext
-    logger.info("Stepped " + x + " steps forward. Generation: " +
-      currentWorld.generation + " population: " + currentWorld.population)
+    logger.info(
+      "Stepped " + x + " steps forward. Generation: " +
+        currentWorld.generation + " population: " + currentWorld.population
+    )
   }
 
   def reset(world: World) = {

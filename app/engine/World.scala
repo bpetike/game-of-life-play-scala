@@ -15,23 +15,24 @@ trait World {
 
   def generateNext: World
 
-  def staysAliveAtNextGeneration(loc: Location) = {
+  def staysAliveAtNextGeneration(loc: Location): Boolean = {
     aliveNeighbours(loc).size match {
       case 2 | 3 => true
-      case _ => false
+      case _     => false
     }
   }
 
-  def becomesAliveAtNextGeneration(loc: Location) = {
+  def becomesAliveAtNextGeneration(loc: Location): Boolean = {
     aliveNeighbours(loc).size == 3
   }
 
-  def neighbourLocations(loc: Location) = {
+  def neighbourLocations(loc: Location): Set[Location] = {
     val offsets = Set(-1, 0, 1)
-    for {dx <- offsets
-         dy <- offsets
-         if (dx, dy) != (0, 0)}
-      yield Location(loc.x + dx, loc.y + dy)
+    for {
+      dx <- offsets
+      dy <- offsets
+      if dx != 0 || dy != 0
+    } yield Location(loc.x + dx, loc.y + dy)
   }
 }
 
