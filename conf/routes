@@ -5,3 +5,5 @@ GET        /                       controllers.HomeController.index
 # Map static resources from the /public folder to the /assets URL path
 GET        /assets/*file        controllers.Assets.at(path="/public", file)
 
+GET        /game/worlds         controllers.GameOfLifeController.getWorldNames
+GET        /gmae/worlds/:world  controllers.GameOfLifeController.setWorld(world: String)

@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils
 
 import scala.collection.{GenMap, GenSet}
 import scala.io.Source
+import scala.language.implicitConversions
 
 object SparseMatrix {
   implicit def string2matrix(s: String): SparseMatrix = {
