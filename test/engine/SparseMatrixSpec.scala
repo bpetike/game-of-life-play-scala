@@ -59,5 +59,23 @@ class SparseMatrixSpec extends WordSpec with Matchers {
         glider2.generateNext shouldBe glider3
       }
     }
+
+    "convert string to sparse matrix" should {
+      "***..** is a single line" in {
+        SparseMatrix.string2matrix("***..**") shouldBe new SparseMatrix(
+          Map(0 -> Set(0, 1, 2, 5, 6))
+        )
+      }
+
+      "empty string is empty sparse matrix" in {
+        SparseMatrix.string2matrix("") shouldBe new SparseMatrix(Map())
+      }
+
+      "perform implicit conversion" in {
+        val s = "*"
+        val m: SparseMatrix = s
+        m shouldBe new SparseMatrix(Map(0 -> Set(0)))
+      }
+    }
   }
 }
