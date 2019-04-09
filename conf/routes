@@ -6,4 +6,6 @@ GET        /                       controllers.HomeController.index
 GET        /assets/*file        controllers.Assets.at(path="/public", file)
 
 GET        /game/worlds         controllers.GameOfLifeController.getWorldNames
-GET        /gmae/worlds/:world  controllers.GameOfLifeController.setWorld(world: String)
+GET        /game/world/:world  controllers.GameOfLifeController.setWorld(world: String)
+GET        /game/reset/:world   controllers.GameOfLifeController.reset(world: String)
+GET        /game/step           controllers.GameOfLifeController.step

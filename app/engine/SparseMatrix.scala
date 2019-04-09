@@ -44,7 +44,7 @@ object SparseMatrix {
 class SparseMatrix(val generation: Int, val data: GenMap[Int, GenSet[Int]])
     extends World {
 
-  def this(d: GenMap[Int, GenSet[Int]]) = this(1, d)
+  def this(d: GenMap[Int, GenSet[Int]]) = this(0, d)
 
   def generateNext: SparseMatrix = {
     var unprocessedNeighbours = Set[Location]()

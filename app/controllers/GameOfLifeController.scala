@@ -2,30 +2,30 @@ package controllers
 
 import java.io.File
 
-import engine.{GameOfLife, SparseMatrix}
+import engine._
 import javax.inject.Inject
 import play.Logger
 import play.api.mvc._
-import play.libs.Json
 
 import scala.concurrent.ExecutionContext
-import scala.io.Source
 
 class GameOfLifeController @Inject()(cc: ControllerComponents)(
   implicit ec: ExecutionContext
 ) extends AbstractController(cc) {
 
-  private val engine = new GameOfLife(new SparseMatrix(Map()))
+  var currentWorld: World = new SparseMatrix(Map())
+  var stepCount = 0
+  val engine = new GameOfLife(new SparseMatrix(Map()))
+
   private val logger = Logger.of(classOf[GameOfLifeController])
 
   def setWorld(worldName: String): Action[AnyContent] = Action {
     implicit request: Request[AnyContent] =>
-      val content = Source.fromFile(s"public/${worldName.toLowerCase}.lif")
-      val data: SparseMatrix = content.getLines().mkString("\n")
-      content.close()
-      logger.info(s"World $worldName set to engine")
+      val data = Util.getWorld(worldName)
+      currentWorld = data
       engine.reset(data)
-      Ok(data.toString)
+      logger.info(s"World $worldName set to engine")
+      Ok(currentWorld.toString)
   }
 
   def getWorldNames: Action[AnyContent] = Action {
@@ -40,10 +40,29 @@ class GameOfLifeController @Inject()(cc: ControllerComponents)(
               file =>
                 file.getName.substring(0, file.getName.indexOf(".")).capitalize
             )
-            .toList.mkString(",")
+            .toList
+            .mkString(",")
         )
       } else {
         NotFound("Cannot find files")
       }
+  }
+
+  def reset(worldName: String): Action[AnyContent] = Action {
+    implicit request: Request[AnyContent] =>
+      val world = Util.getWorld(worldName)
+      engine.reset(world)
+      currentWorld = world
+      stepCount = 0
+      logger.info(s"World $worldName has been reset")
+      Ok(currentWorld.toString)
+  }
+
+  def step: Action[AnyContent] = Action {
+    implicit request: Request[AnyContent] =>
+      currentWorld = engine.step(1)
+      stepCount += 1
+      logger.info(s"World has evolved to $stepCount generation")
+      Ok(currentWorld.toString)
   }
 }

@@ -1,7 +1,5 @@
 package engine
 
-import java.io.File
-
 import play.Logger
 
 class GameOfLife(initialWorld: World) {
@@ -9,12 +7,14 @@ class GameOfLife(initialWorld: World) {
 
   private var currentWorld = initialWorld
 
-  def step(x: Int): Unit = {
-    currentWorld.generateNext
+  def step(x: Int): World = {
     logger.info(
       "Stepped " + x + " steps forward. Generation: " +
         currentWorld.generation + " population: " + currentWorld.population
     )
+    for (i <- currentWorld.generation until currentWorld.generation + x)
+      currentWorld = currentWorld.generateNext
+    currentWorld
   }
 
   def reset(world: World): Unit = {
