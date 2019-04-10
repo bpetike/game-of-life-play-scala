@@ -1,5 +1,7 @@
 package engine
 
+import scala.collection.{GenMap, GenSet}
+
 trait World {
   def isAlive(loc: Location): Boolean
 
@@ -14,6 +16,8 @@ trait World {
   def generation: Int
 
   def generateNext: World
+
+  def representation: GenMap[Int, GenSet[Int]]
 
   def staysAliveAtNextGeneration(loc: Location): Boolean = {
     aliveNeighbours(loc).size match {

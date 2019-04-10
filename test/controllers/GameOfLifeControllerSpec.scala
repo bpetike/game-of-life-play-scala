@@ -22,8 +22,7 @@ class GameOfLifeControllerSpec
         controller.getWorldNames.apply(FakeRequest(GET, "/game/worlds"))
 
       status(home) mustBe OK
-      contentType(home).get mustBe Http.MimeTypes.TEXT
-      contentAsString(home).split(",").contains("Fuses") mustBe true
+      contentType(home).get mustBe Http.MimeTypes.JSON
     }
 
     "set the world to the engine" in {
@@ -34,8 +33,8 @@ class GameOfLifeControllerSpec
         controller.setWorld("Pi").apply(FakeRequest(GET, "/game/world/Pi"))
 
       status(home) mustBe OK
-      contentType(home).get mustBe Http.MimeTypes.TEXT
-      contentAsString(home) mustBe "SparseMatrix:gen:0:Map(0 -> Set(0, 1, 2), 1 -> Set(0, 2), 2 -> Set(0, 2))"
+      contentType(home).get mustBe Http.MimeTypes.JSON
+      contentAsString(home) mustBe "[{\"0\":[0,1,2]},{\"1\":[0,2]},{\"2\":[0,2]}]"
       controller.currentWorld.aliveLocations.toList mustBe List(
         Location(0, 0),
         Location(0, 1),
@@ -59,8 +58,8 @@ class GameOfLifeControllerSpec
         controller.step.apply(FakeRequest(GET, "/game/step"))
 
       status(home) mustBe OK
-      contentType(home).get mustBe Http.MimeTypes.TEXT
-      contentAsString(home) mustBe "SparseMatrix:gen:1:Map(0 -> Set(0, 2), 1 -> Set(0, 2, -1, 3), -1 -> Set(1))"
+      contentType(home).get mustBe Http.MimeTypes.JSON
+      contentAsString(home) mustBe "[{\"0\":[0,2]},{\"1\":[0,2,-1,3]},{\"-1\":[1]}]"
       controller.currentWorld.aliveLocations.toList mustBe List(
         Location(0, 0),
         Location(0, 2),
@@ -86,8 +85,8 @@ class GameOfLifeControllerSpec
         controller.reset("Pi").apply(FakeRequest(GET, "/game/reset/Pi"))
 
       status(home) mustBe OK
-      contentType(home).get mustBe Http.MimeTypes.TEXT // Map(0 -> Set(0, 1, 2), 1 -> Set(0, 2), 2 -> Set(0, 2))
-      contentAsString(home) mustBe "SparseMatrix:gen:0:Map(0 -> Set(0, 1, 2), 1 -> Set(0, 2), 2 -> Set(0, 2))"
+      contentType(home).get mustBe Http.MimeTypes.JSON
+      contentAsString(home) mustBe "[{\"0\":[0,1,2]},{\"1\":[0,2]},{\"2\":[0,2]}]"
       controller.currentWorld.aliveLocations.toList mustBe List(
         Location(0, 0),
         Location(0, 1),
@@ -113,8 +112,8 @@ class GameOfLifeControllerSpec
         controller.getNumberOfSteps.apply(FakeRequest(GET, "/game/stepsnumber"))
 
       status(home) mustBe OK
-      contentType(home).get mustBe Http.MimeTypes.TEXT
-      contentAsString(home) mustBe "2"
+      contentType(home).get mustBe Http.MimeTypes.JSON
+      contentAsString(home) mustBe "{\"steps\":2}"
     }
   }
 }

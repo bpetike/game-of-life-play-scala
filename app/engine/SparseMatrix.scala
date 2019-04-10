@@ -106,4 +106,6 @@ class SparseMatrix(val generation: Int, val data: GenMap[Int, GenSet[Int]])
   override def toString: String = {
     this.getClass.getSimpleName + ":gen:" + generation + ":" + data
   }
+
+  override def representation: GenMap[Int, GenSet[Int]] = this.data
 }

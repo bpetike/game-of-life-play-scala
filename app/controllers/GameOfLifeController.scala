@@ -5,6 +5,7 @@ import java.io.File
 import engine._
 import javax.inject.Inject
 import play.Logger
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc._
 
 import scala.concurrent.ExecutionContext
@@ -24,7 +25,8 @@ class GameOfLifeController @Inject()(cc: ControllerComponents)(
       currentWorld = data
       engine.reset(data)
       logger.info(s"World $worldName set to engine")
-      Ok(currentWorld.toString)
+      val response = createResponse
+      Ok(Json.toJson(response))
   }
 
   def getWorldNames: Action[AnyContent] = Action {
@@ -32,15 +34,19 @@ class GameOfLifeController @Inject()(cc: ControllerComponents)(
       val dir = new File("public")
       if (dir.exists() && dir.isDirectory) {
         Ok(
-          dir
-            .listFiles()
-            .filter(_.isFile)
-            .map(
-              file =>
-                file.getName.substring(0, file.getName.indexOf(".")).capitalize
-            )
-            .toList
-            .mkString(",")
+          Json.obj(
+            "worldNames" ->
+              dir
+                .listFiles()
+                .filter(_.isFile)
+                .map(
+                  file =>
+                    file.getName
+                      .substring(0, file.getName.indexOf("."))
+                      .capitalize
+                )
+                .toList
+          )
         )
       } else {
         NotFound("Cannot find files")
@@ -53,18 +59,26 @@ class GameOfLifeController @Inject()(cc: ControllerComponents)(
       engine.reset(world)
       currentWorld = world
       logger.info(s"World $worldName has been reset")
-      Ok(currentWorld.toString)
+      val response = createResponse
+      Ok(Json.toJson(response))
   }
 
   def step: Action[AnyContent] = Action {
     implicit request: Request[AnyContent] =>
       currentWorld = engine.step(1)
       logger.info(s"World has evolved to ${currentWorld.generation} generation")
-      Ok(currentWorld.toString)
+      val response = createResponse
+      Ok(Json.toJson(response))
   }
 
   def getNumberOfSteps: Action[AnyContent] = Action {
     implicit request: Request[AnyContent] =>
-      Ok(currentWorld.generation.toString)
+      Ok(Json.obj("steps" -> currentWorld.generation))
+  }
+
+  private def createResponse: Iterable[JsObject] = {
+    currentWorld.representation
+      .map(row => Json.obj(row._1.toString -> row._2.toList))
+      .seq
   }
 }
