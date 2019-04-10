@@ -71,7 +71,7 @@ class GameOfLifeControllerSpec
         Location(-1, 1),
       )
       controller.currentWorld.population mustBe 7
-      controller.stepCount mustBe 1
+      controller.currentWorld.generation mustBe 1
     }
 
     "reset the current world to the initial one" in {
@@ -99,6 +99,22 @@ class GameOfLifeControllerSpec
       )
       controller.currentWorld.population mustBe 7
     }
-  }
 
+    "return the number of steps taken" in {
+      val controller =
+        new GameOfLifeController(stubControllerComponents())
+      val initialWorld =
+        new SparseMatrix(Map(0 -> Set(0, 1, 2), 1 -> Set(0, 2), 2 -> Set(0, 2)))
+      controller.currentWorld = initialWorld
+      controller.engine.reset(initialWorld)
+      controller.currentWorld = controller.engine.step(2)
+
+      val home =
+        controller.getNumberOfSteps.apply(FakeRequest(GET, "/game/stepsnumber"))
+
+      status(home) mustBe OK
+      contentType(home).get mustBe Http.MimeTypes.TEXT
+      contentAsString(home) mustBe "2"
+    }
+  }
 }
