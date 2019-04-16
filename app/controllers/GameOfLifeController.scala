@@ -77,8 +77,7 @@ class GameOfLifeController @Inject()(cc: ControllerComponents)(
   }
 
   private def createResponse: Iterable[JsObject] = {
-    currentWorld.representation
-      .map(row => Json.obj(row._1.toString -> row._2.toList))
-      .seq
+    currentWorld.aliveLocations.toList
+      .map(location => Json.obj("x" -> location.x, "y" -> location.y)).seq
   }
 }
